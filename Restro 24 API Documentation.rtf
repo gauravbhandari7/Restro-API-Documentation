@@ -1,0 +1,450 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Candara;}}
+{\colortbl ;\red0\green0\blue255;}
+{\*\generator Riched20 10.0.14393}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\qc\b\f0\fs22\lang9\par
+\ul Entity : User\par
+
+\pard\sa200\sl276\slmult1\ulnone Endpoint : /api/user/address\par
+Method : POST\par
+Parameters\b0  :\par
+\{\par
+  "latitude": "string",\par
+  "longitude": "string",\par
+  "addressName": "string",\par
+  "streetAddress": "string",\par
+  "addressLine2": "string",\par
+  "city": "string",\par
+  "state": "string",\par
+  "zip": "string",\par
+  "phoneNumber": "string",\par
+  "isDefault": bool\par
+\}\par
+\b Description :\b0\par
+Apart from these parameters, there is a field called UserId in UserAddress Class which is of string type. To see how UserId is being passed, we have to see Restro24.Application\\User\\Commands\\CreateUserAddress\\CreateUserAddressCommand.cs . The handle method of the mentioned class uses ICurrentUserService injected in handler class\lang1033  by dependency injection and \lang9 defines:\par
+UserId = _currentUserService.UserId\par
+\lang1033 The service \lang9 ICurrentUserService is registered\lang1033  with type CurrentUserServices as defined in Startup.cs file of Restro24.API.\lang9\par
+\lang1033 If we see Restro24.API\\Services\\CurrentUserServices.cs , we can see the implementation. \par
+\b Response body :\par
+\b0 In case of successful POST operation, the response body is the id of the created tuple.\par
+Example :\par
+1107\par
+\par
+\b\lang9 Endpoint : /api/user/address\par
+\lang1033 Method : Get\par
+Parameters :\b0\par
+"PageNumber" : int\par
+"PageSize" : int\par
+\b Description :\b0\par
+If no parameter is filled with value, PageNumber is assigned as 1 and PageSize as 10. For other values, interpretation is done on the basis of PaginationFilter class(Restro24.Application\\Common\\Filters\\PaginationFilter.cs). The current logged in UserId is comapred with UserId field in UserAddress table. The tuples with the matching userid are fetched.\par
+\b Response body :\b0\par
+Example :\par
+\{\par
+  "pageNumber": 1,\par
+  "pageSize": 10,\par
+  "firstPage": "{{\field{\*\fldinst{HYPERLINK https://localhost:44307/api/user/address?pageNumber=1&pageSize=10 }}{\fldrslt{https://localhost:44307/api/user/address?pageNumber=1&pageSize=10\ul0\cf0}}}}\f0\fs22 ",\par
+  "lastPage": "{{\field{\*\fldinst{HYPERLINK https://localhost:44307/api/user/address?pageNumber=1&pageSize=10 }}{\fldrslt{https://localhost:44307/api/user/address?pageNumber=1&pageSize=10\ul0\cf0}}}}\f0\fs22 ",\par
+  "totalPages": 1,\par
+  "totalRecords": 2,\par
+  "nextPage": null,\par
+  "previousPage": null,\par
+  "succeeded": true,\par
+  "message": null,\par
+  "errors": null,\par
+  "data": [\par
+    \{\par
+      "id": "1106",\par
+      "userId": "superadmin@localhost",\par
+      "latitude": "string",\par
+      "longitude": "string",\par
+      "isDefault": false,\par
+      "isActive": true,\par
+      "addressName": "string",\par
+      "streetAddress": "string",\par
+      "addressLine2": "string",\par
+      "city": "string",\par
+      "state": "string",\par
+      "zip": "string",\par
+      "phoneNumber": "string"\par
+    \},\par
+    \{\par
+      "id": "1107",\par
+      "userId": "superadmin@localhost",\par
+      "latitude": "22",\par
+      "longitude": "55",\par
+      "isDefault": true,\par
+      "isActive": true,\par
+      "addressName": "ggg",\par
+      "streetAddress": "ttt",\par
+      "addressLine2": "wee",\par
+      "city": "tt",\par
+      "state": "gf",\par
+      "zip": "rrr",\par
+      "phoneNumber": "543"\par
+    \}\par
+  ]\par
+\}\par
+\par
+\b Endpoint : \lang9 /api/user/address/\{id\}\par
+Method : Patch\par
+Parameters \b0 :\par
+id : int\par
+\b Description :\par
+\b0 If the supplied id exists, the isActive field of that particular UserAddress is toggled.\par
+\b Response Body :\par
+\b0 If the supplied id exists, \par
+Example :\par
+\{\par
+  "succeeded": true,\par
+  "message": "IsActive status toggled successfully",\par
+  "errors": null,\par
+  "data": 107\par
+\}\b\par
+\par
+Endpoint : /api/user/address/setDefault/\{userAddressId\}\par
+Method : HttpPatch\par
+Parameters \b0 :\par
+userAddressId\lang1033  : int\par
+\b\lang9 Description \b0 : \par
+First of all, all the tuples with current logged in UserId in the UserAddress table are fetched and IsDefault field for those tuples are set to false. Now, requested userAddressId is compared with primary key ( Id ) and for the matching tuple, IsDefault field is set to true.\par
+Suppose, we have three tuples\par
+Id\tab UserId\tab\tab\tab   \tab IsDefault\par
+1106\tab superadmin@localhost\tab\tab     1\par
+1107\tab superadmin@localhost\tab\tab     0\par
+1108\tab superadmin@localhost\tab\tab      1\par
+\par
+If the requested id is 1107, then at first for all the tuples with current logged in UserId(superadmin@localhost), IsDefault field is set to 0. Then , requested userAddressId is compared with Id and for the tuple with requested id, IsDefault field is set to true.\tab\par
+\b Response Body :\par
+\b0\{\par
+  "succeeded": true,\par
+  "message": "Default user address set successfully",\par
+  "errors": null,\par
+  "data": \{\}\par
+\}\par
+\par
+\b Endpoint : /api/user/address/\{id\}\par
+Method : Put\b0\par
+\b Parameters : \par
+\b0 id : int\par
+\b Request Body :\par
+\b0\{\par
+  "id": int,\par
+  "latitude": "string",\par
+  "longitude": "string",\par
+  "addressName": "string",\par
+  "streetAddress": "string",\par
+  "addressLine2": "string",\par
+  "city": "string",\par
+  "state": "string",\par
+  "zip": "string",\par
+  "phoneNumber": "string"\par
+\}\par
+\b Description : \par
+\b0 In case of the existing id, this API updates the field for that particular UserAddress tuple.\par
+\par
+
+\pard\sa200\sl276\slmult1\qc\ul\b Entity :Restaurant\par
+
+\pard\sa200\sl276\slmult1\ulnone Endpoint : api/restaurant\par
+Method : POST\par
+Parameters :\par
+\b0 Name : string\par
+RestaurantCode : string\par
+RegistrationNo : string\par
+StreetAddress : string\par
+AddressLine2 : string\par
+City : string\par
+State : string\par
+ZIP : string\par
+Landline : string\par
+Landline2 : string\par
+Mobile : string\par
+Mobile2 : string\par
+Email : string\par
+IsActive : boolean\par
+StartDate : string($date-time)\par
+EndDate : string($date-time)\par
+Latitude : number($double)\par
+Longitude : number($double)\par
+Image : string($binary)\par
+Status : integer\par
+\b Description : \par
+\b0 Except the Image field, all other parameters are pretty much staright foraward. The Image field saves the string of the image location. The injection of IUploadFileService\lang1033  in CreateRestaurantInfoCommandHandler Class in Restro24.Application\\Restaurant\\Commands\\CreateRestaurantInfo\\CreateRestaurantInfoCommand.cs is for image upload. \lang9 IUploadFileService\lang1033  is registered with type UploadFileService as defined in DependencyInjection class in Restro24.Infrastructure. The UploadFileService class is defined under the Services folder of Restro24.Infrastructure. New name for file is assigned due to security reasons.\par
+fileName = DateTime.Now.Ticks + extension; //Create a new Name for the file due to security reasons.\par
+\b Response Body :\par
+\b0 In Case of Successful POST operation, \par
+Example:\b\par
+\b0\{\par
+  "succeeded": true,\par
+  "message": "Restaurant created successfully",\par
+  "errors": null,\par
+  "data": 236\par
+\}\par
+\par
+\b Endpoint : /api/restaurant\par
+Method : Get\par
+Parameters : \b0\par
+PageNumber : integer\par
+PageSize : integer\par
+\b Description :\par
+\b0  If no parameter is filled with value, PageNumber is assigned as 1 and PageSize as 10. For other values, interpretation is done on the basis of PaginationFilter class(Restro24.Application\\Common\\Filters\\PaginationFilter.cs).\par
+\b Inputs :\par
+\b0 PageNumber : 1\par
+PageSize : 1\par
+\b Response Body :\par
+\b0\{\par
+  "pageNumber": 1,\par
+  "pageSize": 1,\par
+  "firstPage": "{{\field{\*\fldinst{HYPERLINK https://localhost:44307/api/restaurant?pageNumber=1&pageSize=1 }}{\fldrslt{https://localhost:44307/api/restaurant?pageNumber=1&pageSize=1\ul0\cf0}}}}\f0\fs22 ",\par
+  "lastPage": "{{\field{\*\fldinst{HYPERLINK https://localhost:44307/api/restaurant?pageNumber=187&pageSize=1 }}{\fldrslt{https://localhost:44307/api/restaurant?pageNumber=187&pageSize=1\ul0\cf0}}}}\f0\fs22 ",\par
+  "totalPages": 187,\par
+  "totalRecords": 187,\par
+  "nextPage": "{{\field{\*\fldinst{HYPERLINK https://localhost:44307/api/restaurant?pageNumber=2&pageSize=1 }}{\fldrslt{https://localhost:44307/api/restaurant?pageNumber=2&pageSize=1\ul0\cf0}}}}\f0\fs22 ",\par
+  "previousPage": null,\par
+  "succeeded": true,\par
+  "message": null,\par
+  "errors": null,\par
+  "data": [\par
+    \{\par
+      "id": 1,\par
+      "restaurantCode": "26637-322",\par
+      "name": "Home Ing",\par
+      "registrationNo": "593",\par
+      "streetAddress": "La Follette",\par
+      "addressLine2": "4 Pepper Wood Pass",\par
+      "city": "Sacramento",\par
+      "state": "California",\par
+      "zip": "95813",\par
+      "latitude": "38.6026",\par
+      "longitude": "-121.4475",\par
+      "landline": "4086279",\par
+      "landline2": "60",\par
+      "mobile": "9801846041",\par
+      "mobile2": "9801312435",\par
+      "email": "rmillan0@edublogs.org",\par
+      "isActive": false,\par
+      "startDate": "2019-11-26T02:27:20",\par
+      "endDate": "2020-04-02T21:34:57",\par
+      "avgRating": 3.33,\par
+      "status": "Close",\par
+      "image": "Upload/files/000b1ecef2ae11e2b39c22000a1f8adc_7.jpg",\par
+      "createdDate": "2020-09-07T00:15:57",\par
+      "restaurantOperationTime": [\par
+        \{\par
+          "id": 1,\par
+          "restaurantSettingId": 1,\par
+          "day": 0,\par
+          "openingTime": "07:00:00",\par
+          "closingTime": "08:00:00"\par
+        \},\par
+        \{\par
+          "id": 2,\par
+          "restaurantSettingId": 1,\par
+          "day": 1,\par
+          "openingTime": "07:00:00",\par
+          "closingTime": "08:00:00"\par
+        \},\par
+        \{\par
+          "id": 3,\par
+          "restaurantSettingId": 1,\par
+          "day": 2,\par
+          "openingTime": "07:00:00",\par
+          "closingTime": "08:00:00"\par
+        \},\par
+        \{\par
+          "id": 4,\par
+          "restaurantSettingId": 1,\par
+          "day": 3,\par
+          "openingTime": "07:00:00",\par
+          "closingTime": "08:00:00"\par
+        \},\par
+        \{\par
+          "id": 5,\par
+          "restaurantSettingId": 1,\par
+          "day": 4,\par
+          "openingTime": "07:00:00",\par
+          "closingTime": "08:00:00"\par
+        \},\par
+        \{\par
+          "id": 6,\par
+          "restaurantSettingId": 1,\par
+          "day": 5,\par
+          "openingTime": "07:00:00",\par
+          "closingTime": "08:00:00"\par
+        \},\par
+        \{\par
+          "id": 7,\par
+          "restaurantSettingId": 1,\par
+          "day": 6,\par
+          "openingTime": "07:00:00",\par
+          "closingTime": "09:00:00"\par
+        \}\par
+      ]\par
+    \}\par
+  ]\par
+\}\par
+\par
+\b Endpoint : /api/restaurant/\{id\}\par
+Method : PUT\par
+Parameters : \b0\par
+id : int\par
+\b Request Body :\par
+\b0\lang9 Id : integer\par
+Name : string\par
+StreetAddress : string\par
+AddressLine2 : string\par
+City : string\par
+State : string\par
+ZIP : string\par
+Landline : string\par
+Landline2 : string\par
+Mobile : string\par
+Mobile2 : string\par
+Email : string\par
+IsActive : boolean\par
+StartDate : string($date-time)\par
+EndDate : string($date-time)\lang1033\par
+Latitude :number($double)\par
+Longitude : number($double)\par
+Image : string\par
+Status : integer\par
+\b Description :\par
+\b0\lang9 In case of the existing id, this API updates the field for that particular RestaurantInfo tuple.\par
+\b Response Body :\par
+\b0\lang1033 In Case of Successful PUT operation, \par
+Example:\b\par
+\b0\{\par
+  "succeeded": true,\par
+  "message": "Restaurant updated successfully",\par
+  "errors": null,\par
+  "data": 236\par
+\}\par
+\b\par
+\par
+\tab\tab\tab\tab\tab\ul Entity : Cuisine\par
+\ulnone Endpoint : /api/cuisine\par
+Method : POST\par
+Parameters :\par
+\b0 Name : string\par
+Description : string\par
+Country : string\par
+Image : string\par
+\b Response body :\par
+\b0 In case of successful POST operation, the response body is the id of the created tuple.\par
+Example :\par
+17\par
+\par
+\b Endpoint : /api/cuisine\par
+Method : GET\par
+Parameters:\par
+\b0 "PageNumber" : int\par
+"PageSize" : int\par
+\b Description :\b0\par
+If no parameter is filled with value, PageNumber is assigned as 1 and PageSize as 10. For other values, interpretation is done on the basis of PaginationFilter class(Restro24.Application\\Common\\Filters\\PaginationFilter.cs).\par
+\b Example :\par
+Input :\par
+\b0 PageNumber : 1\par
+PageSize : 2\par
+\b Response Body :\par
+\b0\{\par
+  "pageNumber": 1,\par
+  "pageSize": 2,\par
+  "firstPage": "{{\field{\*\fldinst{HYPERLINK https://localhost:44307/api/cuisine?pageNumber=1&pageSize=2 }}{\fldrslt{https://localhost:44307/api/cuisine?pageNumber=1&pageSize=2\ul0\cf0}}}}\f0\fs22 ",\par
+  "lastPage": "{{\field{\*\fldinst{HYPERLINK https://localhost:44307/api/cuisine?pageNumber=8&pageSize=2 }}{\fldrslt{https://localhost:44307/api/cuisine?pageNumber=8&pageSize=2\ul0\cf0}}}}\f0\fs22 ",\par
+  "totalPages": 8,\par
+  "totalRecords": 16,\par
+  "nextPage": "{{\field{\*\fldinst{HYPERLINK https://localhost:44307/api/cuisine?pageNumber=2&pageSize=2 }}{\fldrslt{https://localhost:44307/api/cuisine?pageNumber=2&pageSize=2\ul0\cf0}}}}\f0\fs22 ",\par
+  "previousPage": null,\par
+  "succeeded": true,\par
+  "message": null,\par
+  "errors": null,\par
+  "data": [\par
+    \{\par
+      "id": 1,\par
+      "name": "Nepalese",\par
+      "description": "It's one of the most difficult decisions you'll ever have to make: What to order at your favorite Nepalese restaurant. There are too many delicious options! ",\par
+      "country": "Nepal",\par
+      "image": null\par
+    \},\par
+    \{\par
+      "id": 2,\par
+      "name": "Indian",\par
+      "description": " What to order at your favorite restaurant with lots of indian varieties . There are too many delicious indian dishes options! ",\par
+      "country": "Nepal",\par
+      "image": null\par
+    \}\par
+  ]\par
+\}\par
+\par
+\b Endpoint : /api/cuisine/\{id\}\par
+Method : GET\par
+Parameters:\par
+\b0 id : int\par
+\b Input :\par
+\b0 id : 17\tab\par
+\b Response body :\par
+\b0\{\par
+  "succeeded": true,\par
+  "message": null,\par
+  "errors": null,\par
+  "data": \{\par
+    "id": 17,\par
+    "name": "Western",\par
+    "description": "Western",\par
+    "country": "England",\par
+    "image": "Upload/files/637751661816966080.jpg"\par
+  \}\par
+\}\par
+\par
+\b Endpoint : /api/cuisine/idandname\par
+Method : GET\par
+Description : \b0 No inputs required for this method.\b\par
+Response Body :\par
+\b0\{\par
+  "succeeded": true,\par
+  "message": "Data fetched successfully",\par
+  "errors": null,\par
+  "data": [\par
+    \{\par
+      "id": 1,\par
+      "name": "Nepalese",\par
+      "image": null\par
+    \},\par
+    \{\par
+      "id": 2,\par
+      "name": "Indian",\par
+      "image": null\par
+    \},\par
+    \{\par
+      "id": 3,\par
+      "name": "Newari Khaja",\par
+      "image": null\par
+    \},\par
+    \{\par
+      "id": 4,\par
+      "name": "Parsi",\par
+      "image": null\par
+    \},\par
+    \{\par
+      "id": 5,\par
+      "name": "Korean",\par
+      "image": null\par
+    \},\par
+    \{\par
+      "id": 6,\par
+      "name": "Bakeries",\par
+      "image": null\par
+    \},\par
+    \{\par
+      "id": 7,\par
+      "name": "Liquors",\par
+      "image": null\par
+    \}\par
+ ]\par
+\}\par
+\par
+\par
+\par
+\par
+\par
+}
+ 
